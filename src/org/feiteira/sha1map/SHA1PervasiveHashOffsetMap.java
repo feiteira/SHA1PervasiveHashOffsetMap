@@ -94,6 +94,28 @@ public class SHA1PervasiveHashOffsetMap implements Map<byte[], byte[]> {
 			}
 		}
 	}
+	
+	public void load() {
+
+		System.out
+				.println("Max "
+						+ (planned_elements * (KEY_SIZE + OFFSET_SIZE) * HASHMAP_RELATIVE_SIZE));
+		System.out.println("N Files " + nfiles);
+
+		for (int cnt = 0; cnt < nfiles; cnt++) {
+			try {
+				System.out.println("Creating: " + getFilenameFromCount(cnt));
+				RandomAccessFile f = new RandomAccessFile(
+						getFilenameFromCount(cnt), "rw");
+				// f.setLength(0);
+				// f.setLength(MAX_FILESIZE_BYTES);
+				files[cnt] = f;
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+	}
 
 	private RandomAccessFile getFileFromShahash(long shahash) {
 		// System.out.println("selected file " + ((shahash) / elementsPerFile));

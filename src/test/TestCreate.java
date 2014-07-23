@@ -164,4 +164,100 @@ public class TestCreate {
 
 		}
 	}
+	
+	@Test
+	public void test_performance_read() throws IOException {
+
+		final int ELEMENT_COUNT = 5000000;
+
+		map = new SHA1PervasiveHashOffsetMap(ELEMENT_COUNT, "C:\\testmap",
+				"testmapfile");
+		map.load();
+
+		
+		System.out.println("** Test READING **");
+		// reading
+		{
+			long start = System.currentTimeMillis();
+
+			count = 0;
+			count_success = 0;
+			map.iterate(new KeyPairIterator() {
+
+				@Override
+				public void pair(long index, byte[] key, byte[] val) {
+					if (count % (ELEMENT_COUNT / 100) == 0) {
+//						System.out.println("[" + count + "] @ index " + index
+//								+ " Repeated: " + new BigInteger(key));
+						System.out.println("reading at " + ((count*100)/ELEMENT_COUNT) +  "%");
+					}
+					count++;
+					// mini checksum to verify the validity of the data
+					if (Arrays.equals(val, sampleEncodeForTesing(key))) {
+						count_success++;
+					}
+				}
+			});
+
+			System.out.println("Total reads: " + count);
+			System.out.println("Valid reads: " + count_success);
+
+			long dur = System.currentTimeMillis() - start;
+			System.out.println("Total records " + ELEMENT_COUNT);
+			System.out.println("Duration (secs) " + (dur / 1000.0f));
+			System.out.println("Avg  reads per second "
+					+ (ELEMENT_COUNT / (dur / 1000.0f)));
+
+		}
+	}
+	
+	@Test
+	public void test_performance_get() throws IOException {
+
+		final int ELEMENT_COUNT = 5000000;
+
+		map = new SHA1PervasiveHashOffsetMap(ELEMENT_COUNT, "C:\\testmap",
+				"testmapfile");
+		map.load();
+
+		
+		System.out.println("** Test READING **");
+		// reading
+		{
+			long start = System.currentTimeMillis();
+
+			count = 0;
+			count_success = 0;
+			map.iterate(new KeyPairIterator() {
+
+				@Override
+				public void pair(long index, byte[] key, byte[] val) {
+					if (count % (ELEMENT_COUNT / 100) == 0) {
+//						System.out.println("[" + count + "] @ index " + index
+//								+ " Repeated: " + new BigInteger(key));
+						System.out.println("reading at " + ((count*100)/ELEMENT_COUNT) +  "%");
+					}
+					count++;
+					// mini checksum to verify the validity of the data
+					if (Arrays.equals(val, sampleEncodeForTesing(key))) {
+						count_success++;
+					}
+				}
+			});
+
+			System.out.println("Total reads: " + count);
+			System.out.println("Valid reads: " + count_success);
+
+			long dur = System.currentTimeMillis() - start;
+			System.out.println("Total records " + ELEMENT_COUNT);
+			System.out.println("Duration (secs) " + (dur / 1000.0f));
+			System.out.println("Avg  reads per second "
+					+ (ELEMENT_COUNT / (dur / 1000.0f)));
+
+		}
+	}
+	
+	
+	
+	
 }
