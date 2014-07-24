@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Set;
 
 import org.feiteira.sha1map.KeyPairIterator;
 import org.feiteira.sha1map.SHA1PervasiveHashOffsetMap;
@@ -273,8 +274,9 @@ public class TestCreate {
 		{
 			count = 0;
 			long start = System.currentTimeMillis();
-
-			for (byte[] k : testMap.keySet()) {
+			
+			Set<byte[]> keyset = testMap.keySet();
+			for (byte[] k : keyset) {
 				count++;
 				byte[] mapval = map.get(k);
 				byte[] exp = testMap.get(k);
@@ -286,7 +288,7 @@ public class TestCreate {
 			long dur = System.currentTimeMillis() - start;
 			System.out.println("Duration (secs) " + (dur / 1000.0f));
 			System.out.println("Avg  reads per second "
-					+ (ELEMENT_COUNT / (dur / 1000.0f)));
+					+ (keyset.size() / (dur / 1000.0f)));
 		}
 	}
 
