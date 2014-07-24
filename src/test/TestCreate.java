@@ -141,9 +141,10 @@ public class TestCreate {
 				@Override
 				public void pair(long index, byte[] key, byte[] val) {
 					if (count % (ELEMENT_COUNT / 100) == 0) {
-//						System.out.println("[" + count + "] @ index " + index
-//								+ " Repeated: " + new BigInteger(key));
-						System.out.println("reading at " + ((count*100)/ELEMENT_COUNT) +  "%");
+						// System.out.println("[" + count + "] @ index " + index
+						// + " Repeated: " + new BigInteger(key));
+						System.out.println("reading at "
+								+ ((count * 100) / ELEMENT_COUNT) + "%");
 					}
 					count++;
 					// mini checksum to verify the validity of the data
@@ -164,7 +165,7 @@ public class TestCreate {
 
 		}
 	}
-	
+
 	@Test
 	public void test_performance_read() throws IOException {
 
@@ -174,7 +175,6 @@ public class TestCreate {
 				"testmapfile");
 		map.load();
 
-		
 		System.out.println("** Test READING **");
 		// reading
 		{
@@ -187,9 +187,10 @@ public class TestCreate {
 				@Override
 				public void pair(long index, byte[] key, byte[] val) {
 					if (count % (ELEMENT_COUNT / 100) == 0) {
-//						System.out.println("[" + count + "] @ index " + index
-//								+ " Repeated: " + new BigInteger(key));
-						System.out.println("reading at " + ((count*100)/ELEMENT_COUNT) +  "%");
+						// System.out.println("[" + count + "] @ index " + index
+						// + " Repeated: " + new BigInteger(key));
+						System.out.println("reading at "
+								+ ((count * 100) / ELEMENT_COUNT) + "%");
 					}
 					count++;
 					// mini checksum to verify the validity of the data
@@ -210,17 +211,21 @@ public class TestCreate {
 
 		}
 	}
-	
+
 	@Test
 	public void test_performance_get() throws IOException {
 
 		final int ELEMENT_COUNT = 5000000;
+		final int TESTED_ELEMENTS_COUNT = 50000;
+
+		final int mod = ELEMENT_COUNT / TESTED_ELEMENTS_COUNT;
 
 		map = new SHA1PervasiveHashOffsetMap(ELEMENT_COUNT, "C:\\testmap",
 				"testmapfile");
 		map.load();
 
-		
+		final HashMap<byte[], byte[]> testMap = new HashMap<byte[], byte[]>();
+
 		System.out.println("** Test READING **");
 		// reading
 		{
@@ -232,10 +237,15 @@ public class TestCreate {
 
 				@Override
 				public void pair(long index, byte[] key, byte[] val) {
+					if (count % mod == 0) {
+						testMap.put(key, val);
+					}
+
 					if (count % (ELEMENT_COUNT / 100) == 0) {
-//						System.out.println("[" + count + "] @ index " + index
-//								+ " Repeated: " + new BigInteger(key));
-						System.out.println("reading at " + ((count*100)/ELEMENT_COUNT) +  "%");
+						// System.out.println("[" + count + "] @ index " + index
+						// + " Repeated: " + new BigInteger(key));
+						System.out.println("reading at "
+								+ ((count * 100) / ELEMENT_COUNT) + "%");
 					}
 					count++;
 					// mini checksum to verify the validity of the data
@@ -255,9 +265,29 @@ public class TestCreate {
 					+ (ELEMENT_COUNT / (dur / 1000.0f)));
 
 		}
+
+		// getting
+		
+		System.out.println("** Testing READ ELEMENTS **");
+
+		{
+			count = 0;
+			long start = System.currentTimeMillis();
+
+			for (byte[] k : testMap.keySet()) {
+				count++;
+				byte[] mapval = map.get(k);
+				byte[] exp = testMap.get(k);
+//				System.out.println("Expect:" + new BigInteger(exp));
+//				System.out.println("Receiv:" + new BigInteger(mapval));
+				assertArrayEquals(exp, mapval);
+			}
+			System.out.println("Total reads: " + count);
+			long dur = System.currentTimeMillis() - start;
+			System.out.println("Duration (secs) " + (dur / 1000.0f));
+			System.out.println("Avg  reads per second "
+					+ (ELEMENT_COUNT / (dur / 1000.0f)));
+		}
 	}
-	
-	
-	
-	
+
 }

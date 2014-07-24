@@ -302,10 +302,13 @@ public class SHA1PervasiveHashOffsetMap implements Map<byte[], byte[]> {
 					System.arraycopy(k, 0, data, relative_off, k.length);
 					System.arraycopy(v, 0, data, relative_off + KEY_SIZE,
 							v.length);
+					
+					
 					return;
 				}
 			}
 			System.err.println("Collision!!");
+			System.exit(1);
 		}
 
 		public byte[] getKey() {
@@ -315,7 +318,9 @@ public class SHA1PervasiveHashOffsetMap implements Map<byte[], byte[]> {
 
 		public byte[] getValue(byte[] key) {
 			for (int cnt = 0; cnt < KEYPAIRS_IN_CHUNK; cnt++) {
-				KeyPair kp = keypair[0];
+				KeyPair kp = keypair[cnt];
+							
+				
 				if (Arrays.equals(kp.key, key))
 					return kp.value;
 				if (isNull(kp.key))
